@@ -22,6 +22,7 @@
 #      - /mydata/redis/data:/data
 #    ports:
 #      - 6379:6379
+# micro-cloud镜像构建
 version: "3"
 services:
   micro-cloud-demo:
