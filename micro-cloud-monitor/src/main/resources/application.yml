@@ -1,0 +1,25 @@
+server:
+  port: 9111
+spring:
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+  application:
+    name: micro-cloud-monitor
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        metadata:
+          user.name: ${spring.security.user.name}
+          user.password: ${spring.security.user.password}
+# 服务端点检查
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
