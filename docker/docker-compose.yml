@@ -35,10 +35,9 @@ services:
       - 8002:8002
     volumes:                                                    # 映射数据卷
       - /mydata/micro-cloud-demo:/var/logs
-
   micro-cloud-system:
     image: micro/micro-cloud-system:1.0-SNAPSHOT
-    container_name: micro-cloud-demo
+    container_name: micro-cloud-system
     restart: always
     environment:
       - TZ=Asia/Shanghai
