@@ -1,0 +1,75 @@
+spring:
+  redis:
+    host: 192.168.0.252
+    password: hotel@2020
+    port: 6379
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowCredentials: true
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        #nacos
+        - id: micro-cloud-demo
+          uri: lb://micro-cloud-demo
+          predicates:
+          - Path=/demo/**
+          #限流配置
+          filters:
+          - name: RequestRateLimiter
+            args:
+              key-resolver: '#{@ipKeyResolver}'
+              redis-rate-limiter.replenishRate: 10
+              redis-rate-limiter.burstCapacity: 20
+          #降级配置
+          - name: Hystrix
+            args:
+              name: default
+              fallbackUri: 'forward:/fallback'
+        - id: jeecg-cloud-system-biz    # 自定义路由id,保持唯一
+          # url:目标服务器。lb：从微服务注册中心订阅服务,并且进行服务的路由
+          uri: lb://jeecg-cloud-system-biz
+          # 路由条件
+          predicates:
+          - Path=/sys/**,/test/**,/online/**,/api/**,/big/screen/**,/bigscreen/**,/webSocketApi/**,/message/**
+          #限流配置
+          filters:
+          - name: RequestRateLimiter    # 分布式限流,限制调用的平均速率的同时还允许一定程度的突发调用
+            args:
+              key-resolver: '#{@ipKeyResolver}'      # ip限流
+              redis-rate-limiter.replenishRate: 10   # 令牌桶没秒填充平均速率
+              redis-rate-limiter.burstCapacity: 20   # 令牌桶的总容量
+          #降级配置
+          - name: Hystrix
+            args:
+              name: default
+              fallbackUri: 'forward:/fallback'
+        - id: jeecg-cloud-websocket
+          uri: lb:ws://jeecg-cloud-system-biz
+          predicates:
+            - Path=/websocket/**
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+# hystrix 信号量隔离，3秒后自动超时
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 3000
+  shareSecurityContext: true
+# 验证配置生效
+jeecg:
+  test: 123456

@@ -1,0 +1,18 @@
+# Created by .ignore support plugin (hsz.mobi)
+# 提交到Git时,那些文件不提交
+
+# Maven
+target/
+nacos/
+
+# IDEA
+.idea/
+/logs
+*.iml
+
+
+# Eclipse
+.settings/
+.classpath
+.project
+

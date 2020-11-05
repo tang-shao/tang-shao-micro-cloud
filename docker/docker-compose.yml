@@ -1,0 +1,24 @@
+version: "3"
+services:
+  jenkins:
+    image: jenkins:latest                  # 制定jenkins镜像
+    container_name: jenkins                # 容器显示的名称
+    restart: always                        # 容器随docker启动而启动
+    user: root
+    environment:
+      - TZ=Asia/Shanghai
+    ports:                                 # 端口映射
+      - 18080:8080
+      - 50000:5000
+    volumes:                               # 映射数据卷
+      - /mydata/jenkins_home:/var/jenkins_home
+
+  redis:
+    image: redis:5.0
+    container_name: redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - /mydata/redis/data:/data
+    ports:
+      - 6379:6379
