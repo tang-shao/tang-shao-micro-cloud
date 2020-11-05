@@ -1,24 +1,47 @@
+#version: "3"
+#services:
+#  jenkins:
+#    image: jenkins:latest                  # 制定jenkins镜像
+#    container_name: jenkins                # 容器显示的名称
+#    restart: always                        # 容器随docker启动而启动
+#    user: root
+#    environment:
+#      - TZ=Asia/Shanghai
+#    ports:                                 # 端口映射
+#      - 18080:8080
+#      - 50000:5000
+#    volumes:                               # 映射数据卷
+#      - /mydata/jenkins_home:/var/jenkins_home
+#
+#  redis:
+#    image: redis:5.0
+#    container_name: redis
+#    restart: always
+#    command: redis-server --appendonly yes
+#    volumes:
+#      - /mydata/redis/data:/data
+#    ports:
+#      - 6379:6379
 version: "3"
 services:
-  jenkins:
-    image: jenkins:latest                  # 制定jenkins镜像
-    container_name: jenkins                # 容器显示的名称
-    restart: always                        # 容器随docker启动而启动
-    user: root
+  micro-cloud-demo:
+    image: micro/micro-cloud-demo:1.0-SNAPSHOT                  # 制定jenkins镜像
+    container_name: micro-cloud-demo                            # 容器显示的名称
+    restart: always                                             # 容器随docker启动而启动
     environment:
       - TZ=Asia/Shanghai
-    ports:                                 # 端口映射
-      - 18080:8080
-      - 50000:5000
-    volumes:                               # 映射数据卷
-      - /mydata/jenkins_home:/var/jenkins_home
+    ports:                                                      # 端口映射
+      - 8002:8002
+    volumes:                                                    # 映射数据卷
+      - /mydata/micro-cloud-demo:/var/logs
 
-  redis:
-    image: redis:5.0
-    container_name: redis
+  micro-cloud-system:
+    image: micro/micro-cloud-system:1.0-SNAPSHOT
+    container_name: micro-cloud-demo
     restart: always
-    command: redis-server --appendonly yes
+    environment:
+      - TZ=Asia/Shanghai
     volumes:
-      - /mydata/redis/data:/data
+      - /mydata/micro-cloud-system/data:/var/logs
     ports:
-      - 6379:6379
+      - 8001:8001
