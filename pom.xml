@@ -195,14 +195,6 @@
             <version>1.6.2</version>
         </dependency>
 
-        <!--集成logstash-->
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash-logback.version}</version>
-        </dependency>
-
-
         <!--server-api-->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -282,6 +274,13 @@
                 <groupId>com.cloud</groupId>
                 <artifactId>micro-cloud-security</artifactId>
                 <version>${micro-cloud.version}</version>
+            </dependency>
+
+            <!--集成logstash-->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback.version}</version>
             </dependency>
 
             <!-- 七牛云SDK -->
