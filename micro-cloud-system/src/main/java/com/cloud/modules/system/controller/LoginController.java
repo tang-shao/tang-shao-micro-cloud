@@ -190,6 +190,7 @@ public class LoginController {
 
     @AnonymousAccess
     @GetMapping("/add")
+    @AutoLog("测试EFK")
     @ApiOperation("测试匿名访问 访问接口")
     public Result<?> testAnonymousAccess(){
         Result<Object> res = new Result<>();
@@ -197,6 +198,7 @@ public class LoginController {
         res.setResult("测试匿名访问 访问接口");
         return res;
     }
+
     @GetMapping("/test111")
     @ApiOperation("sdfdafdaf")
     public Result<?> testRedis(HttpServletRequest request){
