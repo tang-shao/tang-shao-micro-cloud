@@ -193,6 +193,8 @@ public class LoginController {
     @AutoLog("测试EFK")
     @ApiOperation("测试匿名访问 访问接口")
     public Result<?> testAnonymousAccess(){
+        int a = 1 / 0;
+        System.out.println(a);
         Result<Object> res = new Result<>();
         res.setSuccess(true);
         res.setResult("测试匿名访问 访问接口");

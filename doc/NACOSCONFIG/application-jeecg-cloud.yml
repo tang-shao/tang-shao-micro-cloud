@@ -163,7 +163,7 @@ logging:
   level:
     com.cloud.modules.system.mapper : debug
 logstash:
-  host: 192.168.31.208
+  host: localhost
 
 #enable swagger
 swagger:
