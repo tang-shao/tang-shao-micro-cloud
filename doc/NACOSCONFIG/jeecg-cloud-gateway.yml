@@ -17,25 +17,27 @@ spring:
             allowedHeaders: "*"
       routes:
         #nacos
-        - id: micro-cloud-demo
-          uri: lb://micro-cloud-demo
+        - id: micro-cloud-system
+          # url:目标服务器。lb：从微服务注册中心订阅服务,并且进行服务的路由
+          uri: lb://micro-cloud-system
+          # 路由条件
           predicates:
-          - Path=/demo/**
-          #限流配置
+          - Path=/sys/**
+          # 限流配置
           filters:
-          - name: RequestRateLimiter
+          - name: RequestRateLimiter                # 分布式限流,限制调用的平均速率的同时还允许一定程度的突发调用
             args:
-              key-resolver: '#{@ipKeyResolver}'
-              redis-rate-limiter.replenishRate: 10
-              redis-rate-limiter.burstCapacity: 20
+              key-resolver: '#{@ipKeyResolver}'     # ip限流
+              redis-rate-limiter.replenishRate: 10  # 令牌桶没秒填充平均速率
+              redis-rate-limiter.burstCapacity: 20  # 令牌桶的总容量
           #降级配置
           - name: Hystrix
             args:
               name: default
               fallbackUri: 'forward:/fallback'
-        - id: jeecg-cloud-system-biz    # 自定义路由id,保持唯一
+        - id: micro-cloud-demo    # 自定义路由id,保持唯一
           # url:目标服务器。lb：从微服务注册中心订阅服务,并且进行服务的路由
-          uri: lb://jeecg-cloud-system-biz
+          uri: lb://micro-cloud-demo
           # 路由条件
           predicates:
           - Path=/sys/**,/test/**,/online/**,/api/**,/big/screen/**,/bigscreen/**,/webSocketApi/**,/message/**

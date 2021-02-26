@@ -1,0 +1,101 @@
+# 环境镜像
+version: "3"
+services:
+  jenkins:
+    image: jenkins:latest                  # 制定jenkins镜像
+    container_name: jenkins                # 容器显示的名称
+    restart: always                        # 容器随docker启动而启动
+    user: root
+    environment:
+      - TZ=Asia/Shanghai
+    ports:                                 # 端口映射
+      - 18080:8080
+      - 50000:5000
+    volumes:                               # 映射数据卷
+      - /mydata/jenkins_home:/var/jenkins_home
+  redis:
+    image: redis:5.0
+    container_name: redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - /mydata/redis/data:/data
+    ports:
+      - 6379:6379
+  elasticsearch:
+    image: elasticsearch:6.4.0              # elasticsearch镜像
+    container_name: elasticsearch           # 容器名称
+    restart: always
+    environment:
+      - "cluster.name=elasticsearch"        # 设置集群名称elasticsearch
+      - "discovery.type=single-node"        # 以单一节点启动
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"    # 使用JVM内存大小
+      - TZ=Asia/Shanghai
+    volumes:
+      - /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins   #插件文件挂载
+      - /mydata/elasticsearch/data:/usr/share/elasticsearch/data         #数据文件挂载
+    ports:                                  # 端口映射
+      - 9200:9200
+      - 9300:9300
+  kibana:
+    image: kibana:6.4.0
+    container_name: kibana
+    restart: always
+    links:
+      - elasticsearch:es #可以用es这个域名访问elasticsearch服务
+    depends_on:
+      - elasticsearch #kibana在elasticsearch启动之后再启动
+    environment:
+      - "elasticsearch.hosts=http://192.168.31.208:9200" #设置访问elasticsearch的地址
+      - TZ=Asia/Shanghai
+    ports:
+      - 5601:5601
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root                      #设置root帐号密码
+    ports:
+      - 3306:3306
+    volumes:
+      - /mydata/mysql/data/db:/var/lib/mysql         #数据文件挂载
+      - /mydata/mysql/data/conf:/etc/mysql/conf.d    #配置文件挂载
+      - /mydata/mysql/log:/var/log/mysql             #日志文件挂载
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: always
+    command: server /data
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /mydata/minio/data:/data
+      - /mydata/minio/config:/root/.minio
+    ports:
+      - 9000:9000
+
+  fluentd:
+    image: fluent/fluentd:v1.10
+    container_name: fluentd
+    user: root
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /mydata/fluentd/log:/fluentd/log
+      - /mydata/fluentd/fluent.conf:/fluentd/etc/fluent.conf
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch:http://192.168.31.208:9200
+    ports:
+      - 24221:24221
+      - 24222:24222
+      - 24223:24223
+      - 24224:24224
+
+
+
+
+
